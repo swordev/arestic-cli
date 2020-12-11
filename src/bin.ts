@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { program } from "commander"
 import { homedir } from "os"
 import { join, relative } from "path"
