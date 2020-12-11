@@ -11,7 +11,7 @@
 ## Install
 
 ```sh
-npm install -g @swordev/arestic
+npm install -g @swordev/arestic-cli
 ```
 
 ## Usage

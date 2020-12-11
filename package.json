@@ -1,8 +1,39 @@
 {
-  "name": "@swordev/arestic",
+  "name": "@swordev/arestic-cli",
   "version": "1.0.0",
+  "description": "CLI tool for automatic restic backups",
+  "main": "lib/bin.js",
+  "files": [
+    "lib/**/*.js",
+    "arestic.schema.json"
+  ],
   "bin": {
     "arestic": "lib/bin.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/swordev/arestic-cli.git"
+  },
+  "keywords": [
+    "restic",
+    "autorestic",
+    "backup",
+    "config",
+    "profile",
+    "cli"
+  ],
+  "author": "Juanra GM <juanrgm724@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/swordev/arestic-cli/issues"
+  },
+  "homepage": "https://github.com/swordev/arestic-cli#readme",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "engines": {
+    "node": ">=12.0.0"
   },
   "scripts": {
     "build": "rimraf lib/* && npm run build:types && npm run build:ts",
