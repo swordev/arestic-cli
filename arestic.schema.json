@@ -1,0 +1,231 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "ARestic",
+  "definitions": {
+    "stringList": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "global-options-cli": {
+      "type": "object",
+      "properties": {
+        "cacert": {
+          "type": "string",
+          "description": "file to load root certificates from (default: use system certificates)"
+        },
+        "cache-dir": {
+          "type": "string",
+          "description": "set the cache directory. (default: use system default cache directory)"
+        },
+        "cleanup-cache ": {
+          "type": "boolean",
+          "description": "auto remove old cache directories"
+        },
+        "json": {
+          "type": "boolean",
+          "description": "set output mode to JSON for commands that support it"
+        },
+        "key-hint": {
+          "type": "string",
+          "description": "key ID of key to try decrypting first (default: $RESTIC_KEY_HINT)"
+        },
+        "limit-download": {
+          "type": "integer",
+          "description": "limits downloads to a maximum rate in KiB/s. (default: unlimited)"
+        },
+        "limit-upload": {
+          "type": "integer",
+          "description": "limits uploads to a maximum rate in KiB/s. (default: unlimited)"
+        },
+        "no-cache": {
+          "type": "boolean",
+          "description": "do not use a local cache"
+        },
+        "no-lock": {
+          "type": "boolean",
+          "description": "do not lock the repo, this allows some operations on read-only repos"
+        },
+        "option": {
+          "$ref": "#/definitions/stringList",
+          "description": "set extended option (key=value, can be specified multiple times)"
+        },
+        "password-command": {
+          "type": "string",
+          "description": "specify a shell command to obtain a password (default: $RESTIC_PASSWORD_COMMAND)"
+        },
+        "password-file": {
+          "type": "string",
+          "description": "read the repository password from a file (default: $RESTIC_PASSWORD_FILE)"
+        },
+        "quiet": {
+          "type": "boolean",
+          "description": "do not output comprehensive progress report"
+        },
+        "repo": {
+          "type": "string",
+          "description": "repository to backup to or restore from (default: $RESTIC_REPOSITORY)"
+        },
+        "tls-client-cert": {
+          "type": "string",
+          "description": "path to a file containing PEM encoded TLS client certificate and private key"
+        },
+        "verbose": {
+          "type": "integer",
+          "description": "be verbose (specify --verbose multiple times or level n)"
+        }
+      }
+    },
+    "backup-options-cli": {
+      "type": "object",
+      "properties": {
+        "exclude": {
+          "$ref": "#/definitions/stringList",
+          "description": "exclude a pattern (can be specified multiple times)"
+        },
+        "exclude-caches": {
+          "type": "boolean",
+          "description": "excludes cache directories that are marked with a CACHEDIR.TAG file. See http://bford.info/cachedir/spec.html for the Cache Directory Tagging Standard"
+        },
+        "exclude-file": {
+          "$ref": "#/definitions/stringList",
+          "description": "read exclude patterns from a file (can be specified multiple times)"
+        },
+        "exclude-if-present": {
+          "type": "string",
+          "description": "takes filename[:header], exclude contents of directories containing filename (except filename itself) if header of that file is as provided (can be specified multiple times)"
+        },
+        "files-from": {
+          "type": "string",
+          "description": "read the files to backup from file (can be combined with file args/can be specified multiple times)"
+        },
+        "force": {
+          "type": "boolean",
+          "description": "force re-reading the target files/directories (overrides the \"parent\" flag)"
+        },
+        "host": {
+          "type": "string",
+          "description": "set the hostname for the snapshot manually. To prevent an expensive rescan use the \"parent\" flag"
+        },
+        "iexclude": {
+          "$ref": "#/definitions/stringList",
+          "description": "same as --exclude but ignores the casing of filenames"
+        },
+        "ignore-inode": {
+          "type": "boolean",
+          "description": "ignore inode number changes when checking for modified files"
+        },
+        "one-file-system": {
+          "type": "boolean",
+          "description": "exclude other file systems"
+        },
+        "parent": {
+          "type": "string",
+          "description": "use this parent snapshot (default: last snapshot in the repo that has the same target files/directories)"
+        },
+        "tag": {
+          "$ref": "#/definitions/stringList",
+          "description": "add a tag for the new snapshot (can be specified multiple times)"
+        },
+        "time": {
+          "type": "string",
+          "description": "time of the backup (ex. '2012-11-01 22:08:41') (default: now)"
+        },
+        "with-atime": {
+          "type": "boolean",
+          "description": "store the atime for all files and directories"
+        }
+      }
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "backend": {
+          "type": "string",
+          "enum": ["local", "rest", "sftp", "s3", "azure", "gs", "rclone"]
+        },
+        "extends": {
+          "type": "string"
+        },
+        "protocol": {
+          "enum": ["http", "https"]
+        },
+        "host": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "passwordPath": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "path": {
+          "type": "string"
+        }
+      }
+    },
+    "backup": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "repositories": {
+          "$ref": "#/definitions/stringList"
+        },
+        "paths": {
+          "$ref": "#/definitions/stringList"
+        },
+        "password": {
+          "type": "string"
+        },
+        "passwordPath": {
+          "type": "string"
+        },
+        "globalOptions": {
+          "$ref": "#/definitions/global-options-cli"
+        },
+        "options": {
+          "$ref": "#/definitions/backup-options-cli"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "repositories": {
+      "type": ["object", "array"],
+      "items": {
+        "$ref": "#/definitions/repository"
+      },
+      "patternProperties": {
+        ".+": {
+          "$ref": "#/definitions/repository"
+        }
+      }
+    },
+    "backups": {
+      "type": ["object", "array"],
+      "items": {
+        "$ref": "#/definitions/backup"
+      },
+      "patternProperties": {
+        ".+": {
+          "$ref": "#/definitions/backup"
+        }
+      }
+    }
+  }
+}

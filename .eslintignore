@@ -1,0 +1,6 @@
+.history
+lib
+node_modules
+src/AResticSchema.d.ts
+package-lock.json
+bin
