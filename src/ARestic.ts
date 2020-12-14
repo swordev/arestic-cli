@@ -9,6 +9,7 @@ import {
 import {
 	checkPath,
 	exec,
+	mkdirIfNotExists,
 	parseJSONFile,
 	parseYAMLFile,
 	validateJsonSchema,
@@ -179,10 +180,15 @@ export class ARestic {
 	}
 
 	async initRepository(repository: Schema.Repository, password: string) {
+		const RESTIC_REPOSITORY = ARestic.formatRepository(repository)
+
+		if (repository.backend === "local")
+			await mkdirIfNotExists(RESTIC_REPOSITORY)
+
 		return await exec("restic", ["init"], {
 			stdio: ["ignore", "pipe", "pipe"],
 			env: Object.assign({}, process.env, {
-				RESTIC_REPOSITORY: ARestic.formatRepository(repository),
+				RESTIC_REPOSITORY: RESTIC_REPOSITORY,
 				RESTIC_PASSWORD: password,
 			}),
 		})
