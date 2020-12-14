@@ -18,12 +18,13 @@ export type BackupOptionsType = {
 }
 
 const configBaseName = ARestic.name.toLowerCase()
+const globalConfigPath = join(homedir(), `${configBaseName}.{json,yaml,yml}`)
 const localConfigPath = relative(
 	process.cwd(),
 	join(process.cwd(), `${configBaseName}.{json,yaml,yml}`)
 )
 
-const configPath = [localConfigPath].join(delimiter)
+const configPath = [localConfigPath, globalConfigPath].join(delimiter)
 
 program.option("-c, --config-path <value>", "Config path", configPath)
 

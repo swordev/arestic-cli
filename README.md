@@ -20,7 +20,7 @@ npm install -g @swordev/arestic-cli
 Usage: npx arestic [options] [command]
 
 Options:
-  -c, --config-path <value>  Config path (default: "arestic.{json,yaml,yml}")
+  -c, --config-path <value>  Config path (default: "arestic.{json,yaml,yml}:$HOME/arestic.{json,yaml,yml}")
   -h, --help                 display help for command
 
 Commands:
