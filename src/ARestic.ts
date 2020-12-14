@@ -1,4 +1,4 @@
-import { normalize, resolve } from "path"
+import { delimiter, normalize, resolve } from "path"
 import {
 	expandBraces,
 	findDuplicates,
@@ -54,7 +54,10 @@ export class ARestic {
 	}
 
 	async loadConfig(path: string) {
-		const paths = expandBraces(path)
+		const paths = path
+			.split(delimiter)
+			.flatMap((value) => expandBraces(value))
+
 		for (const value of paths) {
 			if (await checkPath(value)) {
 				path = value

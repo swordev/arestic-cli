@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { program } from "commander"
 import { homedir } from "os"
-import { join, relative } from "path"
+import { delimiter, join, relative } from "path"
 import { parseStringList, PlainObjectType } from "./util"
 import { Logger } from "./Logger"
 import { ARestic } from "./ARestic"
@@ -18,10 +18,12 @@ export type BackupOptionsType = {
 }
 
 const configBaseName = ARestic.name.toLowerCase()
-const configPath = relative(
+const localConfigPath = relative(
 	process.cwd(),
 	join(process.cwd(), `${configBaseName}.{json,yaml,yml}`)
 )
+
+const configPath = [localConfigPath].join(delimiter)
 
 program.option("-c, --config-path <value>", "Config path", configPath)
 
