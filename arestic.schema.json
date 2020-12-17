@@ -8,6 +8,167 @@
         "type": "string"
       }
     },
+    "env": {
+      "type": "object",
+      "properties": {
+        "RESTIC_REPOSITORY": {
+          "type": "string",
+          "description": "Location of repository (replaces -r)"
+        },
+        "RESTIC_PASSWORD_FILE": {
+          "type": "string",
+          "description": "Location of password file (replaces --password-file)"
+        },
+        "RESTIC_PASSWORD": {
+          "type": "string",
+          "description": "The actual password for the repository"
+        },
+        "RESTIC_PASSWORD_COMMAND": {
+          "type": "string",
+          "description": "Command printing the password for the repository to stdout"
+        },
+        "RESTIC_KEY_HINT": {
+          "type": "string",
+          "description": "ID of key to try decrypting first, before other keys"
+        },
+        "RESTIC_CACHE_DIR": {
+          "type": "string",
+          "description": "Location of the cache directory"
+        },
+        "RESTIC_PROGRESS_FPS": {
+          "type": "string",
+          "description": "Frames per second by which the progress bar is updated"
+        },
+        "TMPDIR": {
+          "type": "string",
+          "description": "Location for temporary files"
+        },
+        "AWS_ACCESS_KEY_ID": {
+          "type": "string",
+          "description": "Amazon S3 access key ID"
+        },
+        "AWS_SECRET_ACCESS_KEY": {
+          "type": "string",
+          "description": "Amazon S3 secret access key"
+        },
+        "AWS_DEFAULT_REGION": {
+          "type": "string",
+          "description": "Amazon S3 default region"
+        },
+        "ST_AUTH": {
+          "type": "string",
+          "description": "Auth URL for keystone v1 authentication"
+        },
+        "ST_USER": {
+          "type": "string",
+          "description": "Username for keystone v1 authentication"
+        },
+        "ST_KEY": {
+          "type": "string",
+          "description": "Password for keystone v1 authentication"
+        },
+        "OS_AUTH_URL": {
+          "type": "string",
+          "description": "Auth URL for keystone authentication"
+        },
+        "OS_REGION_NAME": {
+          "type": "string",
+          "description": "Region name for keystone authentication"
+        },
+        "OS_USERNAME": {
+          "type": "string",
+          "description": "Username for keystone authentication"
+        },
+        "OS_USER_ID": {
+          "type": "string",
+          "description": "User ID for keystone v3 authentication"
+        },
+        "OS_PASSWORD": {
+          "type": "string",
+          "description": "Password for keystone authentication"
+        },
+        "OS_TENANT_ID": {
+          "type": "string",
+          "description": "Tenant ID for keystone v2 authentication"
+        },
+        "OS_TENANT_NAME": {
+          "type": "string",
+          "description": "Tenant name for keystone v2 authentication"
+        },
+        "OS_USER_DOMAIN_NAME": {
+          "type": "string",
+          "description": "User domain name for keystone authentication"
+        },
+        "OS_USER_DOMAIN_ID": {
+          "type": "string",
+          "description": "User domain ID for keystone v3 authentication"
+        },
+        "OS_PROJECT_NAME": {
+          "type": "string",
+          "description": "Project name for keystone authentication"
+        },
+        "OS_PROJECT_DOMAIN_NAME": {
+          "type": "string",
+          "description": "Project domain name for keystone authentication"
+        },
+        "OS_PROJECT_DOMAIN_ID": {
+          "type": "string",
+          "description": "Project domain ID for keystone v3 authentication"
+        },
+        "OS_TRUST_ID": {
+          "type": "string",
+          "description": "Trust ID for keystone v3 authentication"
+        },
+        "OS_APPLICATION_CREDENTIAL_ID": {
+          "type": "string",
+          "description": "Application Credential ID (keystone v3)"
+        },
+        "OS_APPLICATION_CREDENTIAL_NAME": {
+          "type": "string",
+          "description": "Application Credential Name (keystone v3)"
+        },
+        "OS_APPLICATION_CREDENTIAL_SECRET": {
+          "type": "string",
+          "description": "Application Credential Secret (keystone v3)"
+        },
+        "OS_STORAGE_URL": {
+          "type": "string",
+          "description": "Storage URL for token authentication"
+        },
+        "OS_AUTH_TOKEN": {
+          "type": "string",
+          "description": "Auth token for token authentication"
+        },
+        "B2_ACCOUNT_ID": {
+          "type": "string",
+          "description": "Account ID or applicationKeyId for Backblaze B2"
+        },
+        "B2_ACCOUNT_KEY": {
+          "type": "string",
+          "description": "Account Key or applicationKey for Backblaze B2"
+        },
+        "AZURE_ACCOUNT_NAME": {
+          "type": "string",
+          "description": "Account name for Azure"
+        },
+        "AZURE_ACCOUNT_KEY": {
+          "type": "string",
+          "description": "Account key for Azure"
+        },
+        "GOOGLE_PROJECT_ID": {
+          "type": "string",
+          "description": "Project ID for Google Cloud Storage"
+        },
+        "GOOGLE_APPLICATION_CREDENTIALS": {
+          "type": "string",
+          "description": "Application Credentials for Google Cloud Storage (e.g. $HOME/.config/gs-secret-restic-key.json)"
+        },
+        "RCLONE_BWLIMIT": {
+          "type": "string",
+          "description": "rclone bandwidth limit"
+        }
+      }
+    },
     "global-options-cli": {
       "type": "object",
       "properties": {
@@ -145,6 +306,9 @@
         "name": {
           "type": "string"
         },
+        "env": {
+          "$ref": "#/definitions/env"
+        },
         "backend": {
           "type": "string",
           "enum": ["local", "rest", "sftp", "s3", "azure", "gs", "rclone"]
@@ -181,6 +345,9 @@
       "properties": {
         "name": {
           "type": "string"
+        },
+        "env": {
+          "$ref": "#/definitions/env"
         },
         "repositories": {
           "$ref": "#/definitions/stringList"

@@ -26,6 +26,7 @@ export interface ARestic {
  */
 export interface Repository {
   name?: string;
+  env?: Env;
   backend?: "local" | "rest" | "sftp" | "s3" | "azure" | "gs" | "rclone";
   extends?: string;
   protocol?: "http" | "https";
@@ -36,12 +37,172 @@ export interface Repository {
   port?: number;
   path?: string;
 }
+export interface Env {
+  /**
+   * Location of repository (replaces -r)
+   */
+  RESTIC_REPOSITORY?: string;
+  /**
+   * Location of password file (replaces --password-file)
+   */
+  RESTIC_PASSWORD_FILE?: string;
+  /**
+   * The actual password for the repository
+   */
+  RESTIC_PASSWORD?: string;
+  /**
+   * Command printing the password for the repository to stdout
+   */
+  RESTIC_PASSWORD_COMMAND?: string;
+  /**
+   * ID of key to try decrypting first, before other keys
+   */
+  RESTIC_KEY_HINT?: string;
+  /**
+   * Location of the cache directory
+   */
+  RESTIC_CACHE_DIR?: string;
+  /**
+   * Frames per second by which the progress bar is updated
+   */
+  RESTIC_PROGRESS_FPS?: string;
+  /**
+   * Location for temporary files
+   */
+  TMPDIR?: string;
+  /**
+   * Amazon S3 access key ID
+   */
+  AWS_ACCESS_KEY_ID?: string;
+  /**
+   * Amazon S3 secret access key
+   */
+  AWS_SECRET_ACCESS_KEY?: string;
+  /**
+   * Amazon S3 default region
+   */
+  AWS_DEFAULT_REGION?: string;
+  /**
+   * Auth URL for keystone v1 authentication
+   */
+  ST_AUTH?: string;
+  /**
+   * Username for keystone v1 authentication
+   */
+  ST_USER?: string;
+  /**
+   * Password for keystone v1 authentication
+   */
+  ST_KEY?: string;
+  /**
+   * Auth URL for keystone authentication
+   */
+  OS_AUTH_URL?: string;
+  /**
+   * Region name for keystone authentication
+   */
+  OS_REGION_NAME?: string;
+  /**
+   * Username for keystone authentication
+   */
+  OS_USERNAME?: string;
+  /**
+   * User ID for keystone v3 authentication
+   */
+  OS_USER_ID?: string;
+  /**
+   * Password for keystone authentication
+   */
+  OS_PASSWORD?: string;
+  /**
+   * Tenant ID for keystone v2 authentication
+   */
+  OS_TENANT_ID?: string;
+  /**
+   * Tenant name for keystone v2 authentication
+   */
+  OS_TENANT_NAME?: string;
+  /**
+   * User domain name for keystone authentication
+   */
+  OS_USER_DOMAIN_NAME?: string;
+  /**
+   * User domain ID for keystone v3 authentication
+   */
+  OS_USER_DOMAIN_ID?: string;
+  /**
+   * Project name for keystone authentication
+   */
+  OS_PROJECT_NAME?: string;
+  /**
+   * Project domain name for keystone authentication
+   */
+  OS_PROJECT_DOMAIN_NAME?: string;
+  /**
+   * Project domain ID for keystone v3 authentication
+   */
+  OS_PROJECT_DOMAIN_ID?: string;
+  /**
+   * Trust ID for keystone v3 authentication
+   */
+  OS_TRUST_ID?: string;
+  /**
+   * Application Credential ID (keystone v3)
+   */
+  OS_APPLICATION_CREDENTIAL_ID?: string;
+  /**
+   * Application Credential Name (keystone v3)
+   */
+  OS_APPLICATION_CREDENTIAL_NAME?: string;
+  /**
+   * Application Credential Secret (keystone v3)
+   */
+  OS_APPLICATION_CREDENTIAL_SECRET?: string;
+  /**
+   * Storage URL for token authentication
+   */
+  OS_STORAGE_URL?: string;
+  /**
+   * Auth token for token authentication
+   */
+  OS_AUTH_TOKEN?: string;
+  /**
+   * Account ID or applicationKeyId for Backblaze B2
+   */
+  B2_ACCOUNT_ID?: string;
+  /**
+   * Account Key or applicationKey for Backblaze B2
+   */
+  B2_ACCOUNT_KEY?: string;
+  /**
+   * Account name for Azure
+   */
+  AZURE_ACCOUNT_NAME?: string;
+  /**
+   * Account key for Azure
+   */
+  AZURE_ACCOUNT_KEY?: string;
+  /**
+   * Project ID for Google Cloud Storage
+   */
+  GOOGLE_PROJECT_ID?: string;
+  /**
+   * Application Credentials for Google Cloud Storage (e.g. $HOME/.config/gs-secret-restic-key.json)
+   */
+  GOOGLE_APPLICATION_CREDENTIALS?: string;
+  /**
+   * rclone bandwidth limit
+   */
+  RCLONE_BWLIMIT?: string;
+  [k: string]: unknown;
+}
 /**
  * This interface was referenced by `undefined`'s JSON-Schema definition
  * via the `patternProperty` ".+".
  */
 export interface Backup {
   name?: string;
+  env?: Env;
   repositories?: StringList;
   paths?: StringList;
   password?: string;

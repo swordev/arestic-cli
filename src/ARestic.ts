@@ -171,10 +171,16 @@ export class ARestic {
 	}
 
 	protected buildEnv(repository: Schema.Repository, backup: Schema.Backup) {
-		return Object.assign({}, process.env, {
-			RESTIC_REPOSITORY: ARestic.formatRepository(repository),
-			RESTIC_PASSWORD: backup.password,
-		})
+		return Object.assign(
+			{},
+			process.env,
+			{
+				RESTIC_REPOSITORY: ARestic.formatRepository(repository),
+				RESTIC_PASSWORD: backup.password,
+			},
+			repository.env || {},
+			backup.env || {}
+		)
 	}
 
 	async existsRepository(
