@@ -170,19 +170,26 @@ export class ARestic {
 		}
 	}
 
-	async existsRepository(repository: Schema.Repository, password: string) {
+	protected buildEnv(repository: Schema.Repository, backup: Schema.Backup) {
+		return Object.assign({}, process.env, {
+			RESTIC_REPOSITORY: ARestic.formatRepository(repository),
+			RESTIC_PASSWORD: backup.password,
+		})
+	}
+
+	async existsRepository(
+		repository: Schema.Repository,
+		backup: Schema.Backup
+	) {
 		const exitCode = await exec("restic", ["cat", "config"], {
 			stdio: ["ignore", "pipe", "pipe"],
-			env: Object.assign({}, process.env, {
-				RESTIC_REPOSITORY: ARestic.formatRepository(repository),
-				RESTIC_PASSWORD: password,
-			}),
+			env: this.buildEnv(repository, backup),
 		})
 
 		return exitCode === 0
 	}
 
-	async initRepository(repository: Schema.Repository, password: string) {
+	async initRepository(repository: Schema.Repository, backup: Schema.Backup) {
 		const RESTIC_REPOSITORY = ARestic.formatRepository(repository)
 
 		if (repository.backend === "local")
@@ -190,10 +197,7 @@ export class ARestic {
 
 		return await exec("restic", ["init"], {
 			stdio: ["ignore", "pipe", "pipe"],
-			env: Object.assign({}, process.env, {
-				RESTIC_REPOSITORY: RESTIC_REPOSITORY,
-				RESTIC_PASSWORD: password,
-			}),
+			env: this.buildEnv(repository, backup),
 		})
 	}
 
@@ -211,10 +215,7 @@ export class ARestic {
 			"restic",
 			args,
 			{
-				env: Object.assign({}, process.env, {
-					RESTIC_REPOSITORY: ARestic.formatRepository(repository),
-					RESTIC_PASSWORD: data.password,
-				}),
+				env: this.buildEnv(repository, data),
 			},
 			onExecData
 		)

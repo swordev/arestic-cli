@@ -97,11 +97,11 @@ program
 
 					const existsRepository = await restic.existsRepository(
 						repository,
-						backup.password
+						backup
 					)
 
 					if (!existsRepository)
-						await restic.initRepository(repository, backup.password)
+						await restic.initRepository(repository, backup)
 
 					const startDate = new Date()
 
