@@ -1,7 +1,7 @@
 export type PlainObjectType = Record<string, unknown>
 
 export function isPlainObject(value: unknown): value is PlainObjectType {
-	return typeof value === "object" && !!value
+	return value?.constructor === Object
 }
 
 export function parseStringList(value: string) {
