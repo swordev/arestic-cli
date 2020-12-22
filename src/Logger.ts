@@ -36,6 +36,7 @@ export class Logger {
 
 	async writePlainObject(data: PlainObjectType) {
 		for (const key in data) {
+			if (typeof data[key] === "undefined") continue
 			const line = `# ${colorize("yellow", key)}: ${data[key]}`
 			await this.write(line)
 		}

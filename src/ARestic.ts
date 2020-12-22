@@ -210,11 +210,12 @@ export class ARestic {
 	async backup(
 		data: Schema.Backup,
 		repository: Schema.Repository,
+		paths: string[],
 		onExecData: (data: Buffer) => void
 	) {
 		const args = ["backup"]
 			.concat(parseArgs(data.globalOptions || {}))
-			.concat(data.paths)
+			.concat(paths)
 			.concat(parseArgs(data.options))
 
 		return await exec(

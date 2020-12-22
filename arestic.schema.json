@@ -352,6 +352,9 @@
         "repositories": {
           "$ref": "#/definitions/stringList"
         },
+        "snapshotByPath": {
+          "type": "boolean"
+        },
         "paths": {
           "$ref": "#/definitions/stringList"
         },

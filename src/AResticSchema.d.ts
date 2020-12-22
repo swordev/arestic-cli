@@ -204,6 +204,7 @@ export interface Backup {
   name?: string;
   env?: Env;
   repositories?: StringList;
+  snapshotByPath?: boolean;
   paths?: StringList;
   password?: string;
   passwordPath?: string;

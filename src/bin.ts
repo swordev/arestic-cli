@@ -128,36 +128,50 @@ program
 						await logger.writeSeparator()
 					}
 
-					const endTimeObject = await logger.startTimeObject(
-						"backup",
-						{
-							configPath: restic.configPath,
-							backupName: backup.name,
-							repositoryName: repository.name,
-							repository: ARestic.formatRepository(
-								repository,
-								true
-							),
-						}
-					)
+					let pathsCounter = 0
+					const pathsGroups = backup.snapshotByPath
+						? backup.paths.map((path) => [path])
+						: [backup.paths]
 
-					console.log("")
+					for (const paths of pathsGroups) {
+						const endTimeObject = await logger.startTimeObject(
+							"backup",
+							{
+								configPath: restic.configPath,
+								backupName: backup.name,
+								backupPath: backup.snapshotByPath
+									? paths[0]
+									: undefined,
+								repositoryName: repository.name,
+								repository: ARestic.formatRepository(
+									repository,
+									true
+								),
+							}
+						)
 
-					const exitCode = await restic.backup(
-						backup,
-						repository,
-						(data) => logger.write(data)
-					)
+						console.log("")
 
-					await endTimeObject({
-						exitCode: exitCode,
-					})
+						const exitCode = await restic.backup(
+							backup,
+							repository,
+							paths,
+							(data) => logger.write(data)
+						)
 
-					exitCodes.push(exitCode)
+						await endTimeObject({
+							exitCode: exitCode,
+						})
 
-					backupsCounter++
+						exitCodes.push(exitCode)
 
-					await logger.writeSeparator(!!backups[backupsCounter])
+						backupsCounter++
+						pathsCounter++
+						await logger.writeSeparator(
+							!!backups[backupsCounter] ||
+								!!pathsGroups[pathsCounter]
+						)
+					}
 				}
 			}
 
