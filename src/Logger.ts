@@ -2,6 +2,7 @@ import * as fs from "fs"
 import { dirname } from "path"
 import { isPlainObject, PlainObjectType } from "./util"
 import { mkdirIfNotExists, colorize, uncolorize } from "./node-util"
+import { randomBytes } from "crypto"
 
 export class Logger {
 	stream: fs.WriteStream
@@ -29,25 +30,84 @@ export class Logger {
 		})
 	}
 
-	writeBuffer(data: Buffer) {
-		console.log(data.toString())
-		this.stream.write(data.toString())
+	async writeBuffer(data: Buffer) {
+		return await this.write(data.toString(), false)
 	}
 
-	writePlainObject(data: PlainObjectType) {
+	async writePlainObject(data: PlainObjectType) {
 		for (const key in data) {
 			const line = `# ${colorize("yellow", key)}: ${data[key]}`
-			this.write(line)
+			await this.write(line)
 		}
 	}
-	write(data: unknown, consoleLog = true) {
+
+	async writeSeparator(consoleLog = true) {
+		return await this.write(
+			"\n" + colorize("grey", "#".repeat(64) + "\n"),
+			true,
+			consoleLog
+		)
+	}
+
+	async startTimeObject(tag: string, data: PlainObjectType) {
+		const startDate = new Date()
+		const actionId = randomBytes(4).toString("hex")
+
+		const writeTag = async (type: string, close?: boolean) =>
+			await this.write(
+				"# " +
+					colorize(
+						"cyan",
+						`<${close ? "/" : ""}${tag}${
+							type.slice(0, 1).toUpperCase() + type.slice(1)
+						}>`
+					)
+			)
+
+		await writeTag("start")
+		await this.write(
+			Object.assign(
+				{
+					actionId: actionId,
+					date: startDate.toISOString(),
+				},
+				data
+			)
+		)
+		await writeTag("start", true)
+
+		return async (data: PlainObjectType) => {
+			const endDate = new Date()
+			await writeTag("end")
+			await this.write(
+				Object.assign(
+					{
+						actionId: actionId,
+						date: endDate.toISOString(),
+						elapsedTime: `${
+							endDate.getTime() - startDate.getTime()
+						}ms`,
+					},
+					data
+				)
+			)
+			await writeTag("end", true)
+		}
+	}
+
+	async write(data: unknown, lineSalt = true, consoleLog = true) {
 		if (data instanceof Buffer) {
-			this.writeBuffer(data)
+			return await this.writeBuffer(data)
 		} else if (isPlainObject(data)) {
-			this.writePlainObject(data)
+			return await this.writePlainObject(data)
 		} else {
 			if (consoleLog) console.log(data)
-			this.stream.write(`${uncolorize(String(data))}\n`)
+			return new Promise((resolve) => {
+				this.stream.write(
+					`${uncolorize(String(data))}${lineSalt ? "\n" : ""}`,
+					resolve
+				)
+			})
 		}
 	}
 

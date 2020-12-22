@@ -2,7 +2,7 @@
 import { program } from "commander"
 import { homedir } from "os"
 import { delimiter, join, relative } from "path"
-import { parseStringList, PlainObjectType } from "./util"
+import { parseStringList } from "./util"
 import { Logger } from "./Logger"
 import { ARestic } from "./ARestic"
 import { AResticError } from "./AResticError"
@@ -69,8 +69,6 @@ program
 			await logger.init()
 			await restic.loadConfig(globalOptions.configPath)
 
-			let backups = 0
-
 			if (options.names) {
 				const unfoundBackups = options.names.filter(
 					(name) =>
@@ -86,10 +84,17 @@ program
 					)
 			}
 
-			for (const backup of restic.config.backups) {
-				if (options.names && !options.names.includes(backup.name))
-					continue
+			const backups = restic.config.backups.filter(
+				(backup) =>
+					!options.names || options.names.includes(backup.name)
+			)
 
+			if (!backups.length)
+				throw new AResticError(`Backup configs are empty`)
+
+			let backupsCounter = 0
+
+			for (const backup of backups) {
 				for (const repositoryName of backup.repositories) {
 					const repository = restic.config.repositories.find(
 						(repository) => repository.name === repositoryName
@@ -100,28 +105,43 @@ program
 						backup
 					)
 
-					if (!existsRepository)
-						await restic.initRepository(repository, backup)
-
-					const startDate = new Date()
-
-					logger.write(
-						"\n" + colorize("grey", "#".repeat(64)) + "\n",
-						backups > 0
-					)
-
-					const startLogData: PlainObjectType = {
-						date: startDate.toISOString(),
-						configPath: restic.configPath,
-						backupName: backup.name,
-						repositoryName: repository.name,
-						repository: ARestic.formatRepository(repository, true),
+					if (!existsRepository) {
+						const endTimeObject = await logger.startTimeObject(
+							"init",
+							{
+								configPath: restic.configPath,
+								backupName: backup.name,
+								repositoryName: repository.name,
+								repository: ARestic.formatRepository(
+									repository,
+									true
+								),
+							}
+						)
+						const exitCode = await restic.initRepository(
+							repository,
+							backup
+						)
+						await endTimeObject({
+							exitCode: exitCode,
+						})
+						await logger.writeSeparator()
 					}
 
-					if (!existsRepository) startLogData["new"] = true
+					const endTimeObject = await logger.startTimeObject(
+						"backup",
+						{
+							configPath: restic.configPath,
+							backupName: backup.name,
+							repositoryName: repository.name,
+							repository: ARestic.formatRepository(
+								repository,
+								true
+							),
+						}
+					)
 
-					logger.write(startLogData)
-					logger.write("")
+					console.log("")
 
 					const exitCode = await restic.backup(
 						backup,
@@ -129,22 +149,17 @@ program
 						(data) => logger.write(data)
 					)
 
+					await endTimeObject({
+						exitCode: exitCode,
+					})
+
 					exitCodes.push(exitCode)
 
-					const endDate = new Date()
+					backupsCounter++
 
-					logger.write({
-						date: endDate.toISOString(),
-						exitCode: exitCode,
-						execTime: `${
-							endDate.getTime() - startDate.getTime()
-						}ms`,
-					})
-					backups++
+					await logger.writeSeparator(!!backups[backupsCounter])
 				}
 			}
-
-			if (!backups) throw new AResticError(`Backup configs are empty`)
 
 			await logger.end()
 
