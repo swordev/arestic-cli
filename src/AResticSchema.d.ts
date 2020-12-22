@@ -205,11 +205,64 @@ export interface Backup {
   env?: Env;
   repositories?: StringList;
   snapshotByPath?: boolean;
+  pathGlobs?: (string | GlobOptions)[];
   paths?: StringList;
   password?: string;
   passwordPath?: string;
   globalOptions?: GlobalOptionsCli;
   options?: BackupOptionsCli;
+}
+export interface GlobOptions {
+  patterns?: string | StringList;
+  /**
+   * Specifies the maximum depth of a read directory relative to the start directory
+   */
+  deep?: number;
+  /**
+   * Indicates whether to traverse descendants of symbolic link directories
+   */
+  followSymbolicLinks?: boolean;
+  /**
+   * An array of glob patterns to exclude matches. This is an alternative way to use negative patterns
+   */
+  ignore?: string[];
+  /**
+   * Mark the directory path with the final slash
+   */
+  markDirectories?: boolean;
+  /**
+   * Return only directories
+   */
+  onlyDirectories?: boolean;
+  /**
+   * Return only files
+   */
+  onlyFiles?: boolean;
+  /**
+   * Enables Bash-like brace expansion
+   */
+  braceExpansion?: boolean;
+  /**
+   * Enables a case-sensitive mode for matching files
+   */
+  caseSensitiveMatch?: boolean;
+  /**
+   * Allow patterns to match entries that begin with a period (.)
+   */
+  dot?: boolean;
+  /**
+   * Enables Bash-like extglob functionality
+   */
+  extglob?: boolean;
+  /**
+   * Enables recursively repeats a pattern containing **. If false, ** behaves exactly like *
+   */
+  globstar?: boolean;
+  /**
+   * If set to true, then patterns without slashes will be matched against the basename of the path if it contains slashes
+   */
+  baseNameMatch?: boolean;
+  [k: string]: unknown;
 }
 export interface GlobalOptionsCli {
   /**

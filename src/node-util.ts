@@ -4,6 +4,8 @@ import { F_OK } from "constants"
 import { inspect } from "util"
 import { safeLoad } from "js-yaml"
 import * as Ajv from "ajv"
+import * as FastGlob from "fast-glob"
+import type { GlobOptions } from "./AResticSchema"
 
 export async function checkPath(path: string) {
 	try {
@@ -83,4 +85,34 @@ export function uncolorize(text: string) {
 		/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
 		""
 	)
+}
+
+export async function glob(
+	input: (string | GlobOptions)[],
+	defaultOptions?: FastGlob.Options
+) {
+	const patterns: string[] = []
+	const paths: string[] = []
+
+	for (const patternOrOptions of input) {
+		if (typeof patternOrOptions === "string") {
+			patterns.push(patternOrOptions)
+		} else {
+			paths.push(
+				...(await FastGlob(
+					patternOrOptions.patterns,
+					Object.assign(
+						{},
+						defaultOptions,
+						patternOrOptions
+					) as FastGlob.Options
+				))
+			)
+		}
+	}
+
+	if (patterns.length)
+		paths.push(...(await FastGlob(patterns, defaultOptions)))
+
+	return paths
 }

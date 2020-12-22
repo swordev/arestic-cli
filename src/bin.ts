@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 import { program } from "commander"
 import { homedir } from "os"
-import { delimiter, join, relative } from "path"
+import { delimiter, join, normalize, relative } from "path"
 import { parseStringList } from "./util"
 import { Logger } from "./Logger"
 import { ARestic } from "./ARestic"
 import { AResticError } from "./AResticError"
-import { colorize } from "./node-util"
+import { colorize, glob } from "./node-util"
 
 export type GlobalOptionsType = {
 	configPath: string
@@ -129,9 +129,18 @@ program
 					}
 
 					let pathsCounter = 0
+
+					const paths = (backup.paths || [])
+						.concat(
+							...(await glob(backup.pathGlobs || [], {
+								absolute: true,
+							}))
+						)
+						.map((path) => normalize(path))
+
 					const pathsGroups = backup.snapshotByPath
-						? backup.paths.map((path) => [path])
-						: [backup.paths]
+						? paths.map((path) => [path])
+						: [paths]
 
 					for (const paths of pathsGroups) {
 						const endTimeObject = await logger.startTimeObject(

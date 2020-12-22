@@ -8,6 +8,80 @@
         "type": "string"
       }
     },
+    "glob-options": {
+      "type": "object",
+      "properties": {
+        "patterns": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/stringList"
+            }
+          ]
+        },
+        "deep": {
+          "type": "integer",
+          "description": "Specifies the maximum depth of a read directory relative to the start directory",
+          "default": -1
+        },
+        "followSymbolicLinks": {
+          "type": "boolean",
+          "description": "Indicates whether to traverse descendants of symbolic link directories",
+          "default": true
+        },
+        "ignore": {
+          "$ref": "#/definitions/stringList",
+          "description": "An array of glob patterns to exclude matches. This is an alternative way to use negative patterns"
+        },
+        "markDirectories": {
+          "type": "boolean",
+          "description": "Mark the directory path with the final slash",
+          "default": true
+        },
+        "onlyDirectories": {
+          "type": "boolean",
+          "description": "Return only directories",
+          "default": false
+        },
+        "onlyFiles": {
+          "type": "boolean",
+          "description": "Return only files",
+          "default": true
+        },
+        "braceExpansion": {
+          "type": "boolean",
+          "description": "Enables Bash-like brace expansion",
+          "default": true
+        },
+        "caseSensitiveMatch": {
+          "type": "boolean",
+          "description": "Enables a case-sensitive mode for matching files",
+          "default": true
+        },
+        "dot": {
+          "type": "boolean",
+          "description": "Allow patterns to match entries that begin with a period (.)",
+          "default": false
+        },
+        "extglob": {
+          "type": "boolean",
+          "description": "Enables Bash-like extglob functionality",
+          "default": true
+        },
+        "globstar": {
+          "type": "boolean",
+          "description": "Enables recursively repeats a pattern containing **. If false, ** behaves exactly like *",
+          "default": true
+        },
+        "baseNameMatch": {
+          "type": "boolean",
+          "description": "If set to true, then patterns without slashes will be matched against the basename of the path if it contains slashes",
+          "default": false
+        }
+      }
+    },
     "env": {
       "type": "object",
       "properties": {
@@ -354,6 +428,19 @@
         },
         "snapshotByPath": {
           "type": "boolean"
+        },
+        "pathGlobs": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "$ref": "#/definitions/glob-options"
+              }
+            ]
+          }
         },
         "paths": {
           "$ref": "#/definitions/stringList"

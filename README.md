@@ -3,6 +3,7 @@
 
 # Features
 - Backup config profiles
+- Backup path globs
 - File config JSON/YAML format
 - Auto init repositories
 - Logging file
