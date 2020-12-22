@@ -207,6 +207,7 @@ export interface Backup {
   snapshotByPath?: boolean;
   pathGlobs?: (string | GlobOptions)[];
   paths?: StringList;
+  pathRegexes?: StringList;
   password?: string;
   passwordPath?: string;
   globalOptions?: GlobalOptionsCli;

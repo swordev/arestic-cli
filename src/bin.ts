@@ -130,6 +130,15 @@ program
 
 					let pathsCounter = 0
 
+					const pathRegexes = backup.pathRegexes?.map(
+						(regex) => new RegExp(regex)
+					)
+
+					const pathMatches: Record<
+						string,
+						Record<string, string>
+					> = {}
+
 					const paths = (backup.paths || [])
 						.concat(
 							...(await glob(backup.pathGlobs || [], {
@@ -137,6 +146,17 @@ program
 							}))
 						)
 						.map((path) => normalize(path))
+						.filter((path) => {
+							if (!pathRegexes) return true
+							for (const regex of pathRegexes) {
+								const matches = regex.exec(path)
+								if (matches) {
+									pathMatches[path] = matches.groups
+									return true
+								}
+							}
+							return false
+						})
 
 					const pathsGroups = backup.snapshotByPath
 						? paths.map((path) => [path])

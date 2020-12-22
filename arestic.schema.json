@@ -445,6 +445,9 @@
         "paths": {
           "$ref": "#/definitions/stringList"
         },
+        "pathRegexes": {
+          "$ref": "#/definitions/stringList"
+        },
         "password": {
           "type": "string"
         },
