@@ -1,3 +1,12 @@
+## [1.2.1](https://github.com/swordev/arestic-cli/compare/v1.2.0...v1.2.1) (2020-12-28)
+
+
+### Bug Fixes
+
+* print repository init log ([ee9ed78](https://github.com/swordev/arestic-cli/commit/ee9ed78a54b3419a1d0703bb3ab7f87b364b1d08))
+
+
+
 # [1.2.0](https://github.com/swordev/arestic-cli/compare/v1.1.1...v1.2.0) (2020-12-28)
 
 
