@@ -195,16 +195,25 @@ export class ARestic {
 		return exitCode === 0
 	}
 
-	async initRepository(repository: Schema.Repository, backup: Schema.Backup) {
+	async initRepository(
+		repository: Schema.Repository,
+		backup: Schema.Backup,
+		onExecData: (data: Buffer) => void
+	) {
 		const RESTIC_REPOSITORY = ARestic.formatRepository(repository)
 
 		if (repository.backend === "local")
 			await mkdirIfNotExists(RESTIC_REPOSITORY)
 
-		return await exec("restic", ["init"], {
-			stdio: ["ignore", "pipe", "pipe"],
-			env: this.buildEnv(repository, backup),
-		})
+		return await exec(
+			"restic",
+			["init"],
+			{
+				stdio: ["ignore", "pipe", "pipe"],
+				env: this.buildEnv(repository, backup),
+			},
+			onExecData
+		)
 	}
 
 	async backup(

@@ -130,7 +130,8 @@ program
 						)
 						const exitCode = await restic.initRepository(
 							repository,
-							backup
+							backup,
+							(data) => logger.write(data)
 						)
 						await endTimeObject({
 							exitCode: exitCode,
