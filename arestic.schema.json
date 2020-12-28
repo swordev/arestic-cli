@@ -448,6 +448,9 @@
         "pathRegexes": {
           "$ref": "#/definitions/stringList"
         },
+        "regexDateFormat": {
+          "type": "string"
+        },
         "password": {
           "type": "string"
         },

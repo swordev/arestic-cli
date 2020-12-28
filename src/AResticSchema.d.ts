@@ -208,6 +208,7 @@ export interface Backup {
   pathGlobs?: (string | GlobOptions)[];
   paths?: StringList;
   pathRegexes?: StringList;
+  regexDateFormat?: string;
   password?: string;
   passwordPath?: string;
   globalOptions?: GlobalOptionsCli;

@@ -7,6 +7,10 @@ import { Logger } from "./Logger"
 import { ARestic } from "./ARestic"
 import { AResticError } from "./AResticError"
 import { colorize, glob } from "./node-util"
+import * as dayjs from "dayjs"
+import * as customParseFormat from "dayjs/plugin/customParseFormat"
+
+dayjs.extend(customParseFormat)
 
 export type GlobalOptionsType = {
 	configPath: string
@@ -92,9 +96,15 @@ program
 			if (!backups.length)
 				throw new AResticError(`Backup configs are empty`)
 
+			for (const backup of backups)
+				if (backup.regexDateFormat && !backup.snapshotByPath)
+					throw new AResticError(
+						`'regexDateFormat' option requires to enable 'snapshotByPath'`
+					)
+
 			let backupsCounter = 0
 
-			for (const backup of backups) {
+			for (let backup of backups) {
 				for (const repositoryName of backup.repositories) {
 					const repository = restic.config.repositories.find(
 						(repository) => repository.name === repositoryName
@@ -180,6 +190,36 @@ program
 						)
 
 						console.log("")
+
+						if (backup.regexDateFormat) {
+							const path = paths[0]
+							const dateStr = pathMatches[path]?.["date"]
+
+							if (!dateStr)
+								throw new AResticError(
+									`'regexDateFormat' require the 'date' regular expression capture`
+								)
+
+							const dateInstace = dayjs(
+								dateStr,
+								backup.regexDateFormat,
+								true
+							)
+
+							if (!dateInstace.isValid())
+								throw new AResticError(
+									`Date and format are not valid: ${dateStr}, ${backup.regexDateFormat}`
+								)
+
+							backup = Object.assign({}, backup)
+							backup.options = Object.assign(
+								{},
+								backup.options || {}
+							)
+							backup.options.time = dateInstace.format(
+								"YYYY-MM-DD HH:mm:ss"
+							)
+						}
 
 						const exitCode = await restic.backup(
 							backup,
