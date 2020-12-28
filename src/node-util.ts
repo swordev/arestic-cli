@@ -56,7 +56,6 @@ export async function exec(
 			args,
 			Object.assign(
 				{
-					shell: true,
 					stdio: ["inherit", "pipe", "pipe"],
 				} as SpawnOptions,
 				options
