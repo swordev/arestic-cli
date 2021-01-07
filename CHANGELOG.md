@@ -1,3 +1,12 @@
+# [1.3.0](https://github.com/swordev/arestic-cli/compare/v1.2.1...v1.3.0) (2021-01-07)
+
+
+### Features
+
+* add `forget` config support ([1469577](https://github.com/swordev/arestic-cli/commit/14695776f0a014fb28b7f4761c4515c0b6bdd03d))
+
+
+
 ## [1.2.1](https://github.com/swordev/arestic-cli/compare/v1.2.0...v1.2.1) (2020-12-28)
 
 
