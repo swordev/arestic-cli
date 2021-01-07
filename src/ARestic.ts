@@ -150,23 +150,37 @@ export class ARestic {
 				)}`
 			)
 
-		const duplicatedBackupNames = findDuplicates(config.backups)
-		if (duplicatedBackupNames.length)
-			throw new AResticError(
-				`Duplicated backup names: ${duplicatedBackupNames.join(", ")}`
-			)
+		const configGroups: {
+			type: string
+			configs: { name?: string; repositories?: string[] }[]
+		}[] = [
+			{
+				type: "backup",
+				configs: config.backups,
+			},
+		]
 
-		for (const backup of config.backups) {
-			const unfoundRepositoryNames = backup.repositories?.filter(
-				(name) =>
-					!config.repositories.find((repo) => repo.name === name)
-			)
-			if (unfoundRepositoryNames?.length)
+		for (const configGroup of configGroups) {
+			const duplicatedNames = findDuplicates(configGroup.configs)
+			if (duplicatedNames.length)
 				throw new AResticError(
-					`Repository names not found at '${
-						backup.name
-					}' backup: ${unfoundRepositoryNames.join(", ")}`
+					`Duplicated ${
+						configGroup.type
+					} names: ${duplicatedNames.join(", ")}`
 				)
+
+			for (const groupConfig of configGroup.configs) {
+				const unfoundRepositoryNames = groupConfig.repositories?.filter(
+					(name) =>
+						!config.repositories.find((repo) => repo.name === name)
+				)
+				if (unfoundRepositoryNames?.length)
+					throw new AResticError(
+						`Repository names not found at '${groupConfig.name}' ${
+							configGroup.type
+						}: ${unfoundRepositoryNames.join(", ")}`
+					)
+			}
 		}
 	}
 
