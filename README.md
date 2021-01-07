@@ -2,10 +2,13 @@
 > CLI tool for automatic restic backups.
 
 # Features
-- Backup config profiles
-- Backup path globs
+- Config profiles
+  - Repositories
+  - Backups
 - File config JSON/YAML format
 - Auto init repositories
+- Path globs
+- Custom snapshot date by path regex capture
 - Logging file
 - Cross-platform
 
