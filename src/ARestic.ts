@@ -25,6 +25,9 @@ export type ConfigType<TNormalized extends boolean = true> = {
 	backups: TNormalized extends true
 		? Schema.Backup[]
 		: Record<string, Schema.Backup> | Schema.Backup[]
+	forgets: TNormalized extends true
+		? Schema.Forget[]
+		: Record<string, Schema.Forget> | Schema.Forget[]
 }
 
 export class ARestic {
@@ -134,9 +137,22 @@ export class ARestic {
 					await fs.readFile(backup.passwordPath)
 				).toString()
 
+		const forgets: Schema.Forget[] = Array.isArray(config.forgets)
+			? config.forgets.slice(0).map((forget) => Object.assign({}, forget))
+			: isPlainObject(config.forgets)
+			? recordToArray(config.forgets, "name")
+			: []
+
+		for (const forget of forgets)
+			if (forget.passwordPath)
+				forget.password = (
+					await fs.readFile(forget.passwordPath)
+				).toString()
+
 		return {
 			repositories: repositories,
 			backups: backups,
+			forgets: forgets,
 		} as ConfigType
 	}
 
@@ -240,6 +256,25 @@ export class ARestic {
 			.concat(parseArgs(data.globalOptions || {}))
 			.concat(paths)
 			.concat(parseArgs(data.options))
+
+		return await exec(
+			"restic",
+			args,
+			{
+				env: this.buildEnv(repository, data),
+			},
+			onExecData
+		)
+	}
+
+	async forget(
+		data: Schema.Forget,
+		repository: Schema.Repository,
+		onExecData: (data: Buffer) => void
+	) {
+		const args = ["forget"]
+			.concat(parseArgs(data.globalOptions || {}))
+			.concat(parseArgs(data.options || {}))
 
 		return await exec(
 			"restic",

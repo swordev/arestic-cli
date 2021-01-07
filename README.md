@@ -5,6 +5,7 @@
 - Config profiles
   - Repositories
   - Backups
+  - Forgets
 - File config JSON/YAML format
 - Auto init repositories
 - Path globs
@@ -29,7 +30,8 @@ Options:
 
 Commands:
   parse                      Parse config
-  backup [options]           Create backups
+  backup [options]           Create snapshots
+  forget [options]           Forget snapshots
   help [command]             display help for command
 ```
 

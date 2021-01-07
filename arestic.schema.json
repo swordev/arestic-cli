@@ -373,6 +373,67 @@
         }
       }
     },
+    "forget-options-cli": {
+      "type": "object",
+      "properties": {
+        "keep-last": {
+          "type": "integer",
+          "description": "keep the last n snapshots"
+        },
+        "keep-hourly": {
+          "type": "integer",
+          "description": "keep the last n hourly snapshots"
+        },
+        "keep-daily": {
+          "type": "integer",
+          "description": "keep the last n daily snapshots"
+        },
+        "keep-weekly": {
+          "type": "integer",
+          "description": "keep the last n weekly snapshots"
+        },
+        "keep-monthly": {
+          "type": "integer",
+          "description": "keep the last n monthly snapshots"
+        },
+        "keep-yearly": {
+          "type": "integer",
+          "description": "keep the last n yearly snapshots"
+        },
+        "keep-within": {
+          "type": "string",
+          "description": "keep snapshots that are newer than duration (eg. 1y5m7d2h) relative to the latest snapshot"
+        },
+        "keep-tag": {
+          "$ref": "#/definitions/stringList",
+          "description": "keep snapshots with this taglist (can be specified multiple times) (default [])"
+        },
+        "host": {
+          "type": "string",
+          "description": "only consider snapshots with the given host"
+        },
+        "tag": {
+          "$ref": "#/definitions/stringList",
+          "description": "only consider snapshots which include this taglist in the format `tag[,tag,...]` (can be specified multiple times) (default [])"
+        },
+        "compact": {
+          "type": "boolean",
+          "description": "use compact format"
+        },
+        "group-by": {
+          "type": "string",
+          "description": "string for grouping snapshots by host,paths,tags (default \"host,paths\")"
+        },
+        "dry-run": {
+          "type": "boolean",
+          "description": "do not delete anything, just print what would be done"
+        },
+        "prune": {
+          "type": "boolean",
+          "description": "automatically run the 'prune' command if snapshots have been removed"
+        }
+      }
+    },
     "repository": {
       "type": "object",
       "additionalProperties": false,
@@ -464,6 +525,34 @@
           "$ref": "#/definitions/backup-options-cli"
         }
       }
+    },
+    "forget": {
+      "title": "Forget",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "env": {
+          "$ref": "#/definitions/env"
+        },
+        "repositories": {
+          "$ref": "#/definitions/stringList"
+        },
+        "password": {
+          "type": "string"
+        },
+        "passwordPath": {
+          "type": "string"
+        },
+        "globalOptions": {
+          "$ref": "#/definitions/global-options-cli"
+        },
+        "options": {
+          "$ref": "#/definitions/forget-options-cli"
+        }
+      }
     }
   },
   "type": "object",
@@ -487,6 +576,17 @@
       "patternProperties": {
         ".+": {
           "$ref": "#/definitions/backup"
+        }
+      }
+    },
+    "forgets": {
+      "type": ["object", "array"],
+      "items": {
+        "$ref": "#/definitions/forget"
+      },
+      "patternProperties": {
+        ".+": {
+          "$ref": "#/definitions/forget"
         }
       }
     }

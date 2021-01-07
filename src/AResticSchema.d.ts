@@ -18,6 +18,11 @@ export interface ARestic {
         [k: string]: Backup;
       }
     | Backup[];
+  forgets?:
+    | {
+        [k: string]: Forget;
+      }
+    | Forget[];
   [k: string]: unknown;
 }
 /**
@@ -390,5 +395,77 @@ export interface BackupOptionsCli {
    * store the atime for all files and directories
    */
   "with-atime"?: boolean;
+  [k: string]: unknown;
+}
+/**
+ * This interface was referenced by `undefined`'s JSON-Schema definition
+ * via the `patternProperty` ".+".
+ */
+export interface Forget {
+  name?: string;
+  env?: Env;
+  repositories?: StringList;
+  password?: string;
+  passwordPath?: string;
+  globalOptions?: GlobalOptionsCli;
+  options?: ForgetOptionsCli;
+}
+export interface ForgetOptionsCli {
+  /**
+   * keep the last n snapshots
+   */
+  "keep-last"?: number;
+  /**
+   * keep the last n hourly snapshots
+   */
+  "keep-hourly"?: number;
+  /**
+   * keep the last n daily snapshots
+   */
+  "keep-daily"?: number;
+  /**
+   * keep the last n weekly snapshots
+   */
+  "keep-weekly"?: number;
+  /**
+   * keep the last n monthly snapshots
+   */
+  "keep-monthly"?: number;
+  /**
+   * keep the last n yearly snapshots
+   */
+  "keep-yearly"?: number;
+  /**
+   * keep snapshots that are newer than duration (eg. 1y5m7d2h) relative to the latest snapshot
+   */
+  "keep-within"?: string;
+  /**
+   * keep snapshots with this taglist (can be specified multiple times) (default [])
+   */
+  "keep-tag"?: string[];
+  /**
+   * only consider snapshots with the given host
+   */
+  host?: string;
+  /**
+   * only consider snapshots which include this taglist in the format `tag[,tag,...]` (can be specified multiple times) (default [])
+   */
+  tag?: string[];
+  /**
+   * use compact format
+   */
+  compact?: boolean;
+  /**
+   * string for grouping snapshots by host,paths,tags (default "host,paths")
+   */
+  "group-by"?: string;
+  /**
+   * do not delete anything, just print what would be done
+   */
+  "dry-run"?: boolean;
+  /**
+   * automatically run the 'prune' command if snapshots have been removed
+   */
+  prune?: boolean;
   [k: string]: unknown;
 }

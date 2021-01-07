@@ -21,6 +21,11 @@ export type BackupOptionsType = {
 	names: string[]
 }
 
+export type ForgetOptionsType = {
+	logPath: string
+	names: string[]
+}
+
 const configBaseName = ARestic.name.toLowerCase()
 const globalConfigPath = join(homedir(), `${configBaseName}.{json,yaml,yml}`)
 const localConfigPath = relative(
@@ -46,7 +51,7 @@ program
 
 program
 	.command("backup")
-	.description("Create backups")
+	.description("Create snapshots")
 	.option(
 		"-l, --log-path <value>",
 		"Log path",
@@ -242,6 +247,102 @@ program
 								!!pathsGroups[pathsCounter]
 						)
 					}
+				}
+			}
+
+			await logger.end()
+
+			if (!exitCodes.length || exitCodes.some((v) => v)) process.exit(1)
+		})
+	)
+
+program
+	.command("forget")
+	.description("Forget snapshots")
+	.option(
+		"-l, --log-path <value>",
+		"Log path",
+		join(
+			homedir(),
+			`.${configBaseName}`,
+			"logs",
+			"backups-{year}-{month}.log"
+		)
+	)
+	.option<string[]>(
+		"-n, --names <values>",
+		"Forget names",
+		parseStringList,
+		null
+	)
+	.action(
+		onCommandAction(async (options: ForgetOptionsType) => {
+			const globalOptions = getGlobalOptions()
+			const exitCodes: number[] = []
+			const restic = new ARestic()
+			const logger = new Logger(options.logPath)
+
+			await logger.init()
+			await restic.loadConfig(globalOptions.configPath)
+
+			if (options.names) {
+				const unfounds = options.names.filter(
+					(name) =>
+						!restic.config.backups.some(
+							(backup) => backup.name === name
+						)
+				)
+				if (unfounds.length)
+					throw new AResticError(
+						`Forget configs not founds: ${unfounds.join(", ")}`
+					)
+			}
+
+			const forgets = restic.config.forgets.filter(
+				(forget) =>
+					!options.names || options.names.includes(forget.name)
+			)
+
+			if (!forgets.length)
+				throw new AResticError(`Forget configs are empty`)
+
+			let forgetsCounter = 0
+
+			for (const forget of forgets) {
+				for (const repositoryName of forget.repositories) {
+					const repository = restic.config.repositories.find(
+						(repository) => repository.name === repositoryName
+					)
+
+					const endTimeObject = await logger.startTimeObject(
+						"forget",
+						{
+							configPath: restic.configPath,
+							forgetName: forget.name,
+							repositoryName: repository.name,
+							repository: ARestic.formatRepository(
+								repository,
+								true
+							),
+						}
+					)
+
+					console.log("")
+
+					const exitCode = await restic.forget(
+						forget,
+						repository,
+						(data) => logger.write(data)
+					)
+
+					await endTimeObject({
+						exitCode: exitCode,
+					})
+
+					exitCodes.push(exitCode)
+
+					forgetsCounter++
+					await logger.writeSeparator(!!forgets[forgetsCounter])
 				}
 			}
 
