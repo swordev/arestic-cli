@@ -84,3 +84,24 @@ backups:
       tag:
         - data
 ```
+
+### Custom snapshot date
+
+```yaml
+repositories:
+  local:
+    backend: local
+    path: /var/data/restic
+backups:
+  backups:
+    repositories:
+      - local
+    password: SECRET
+    snapshotByPath: true
+    pathGlobs:
+      - patterns: /var/data/backups/*
+        onlyDirectories: true
+    pathRegexes:
+      - backup-(?<date>[\d\-]+)$
+    regexDateFormat: YYYY-MM-DD-HH-mm-ss
+```
